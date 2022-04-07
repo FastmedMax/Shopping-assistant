@@ -14,3 +14,9 @@ class UserCartSelizer(serializers.ModelSerializer):
         model = UserCart
         fields = "__all__"
         depth = 2
+
+
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = "__all__"
