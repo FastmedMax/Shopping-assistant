@@ -26,3 +26,9 @@ class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
         fields = "__all__"
+
+
+class StreetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Street
+        fields = "__all__"
