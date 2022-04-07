@@ -32,3 +32,9 @@ class StreetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Street
         fields = "__all__"
+
+
+class HouseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = House
+        fields = "__all__"
