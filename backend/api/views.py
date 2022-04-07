@@ -31,3 +31,18 @@ class CityViewSet(viewsets.GenericViewSet):
         districts = self.queryset.filter(city_id=pk)
         serializer = self.serializer_class(districts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DistrictViewSet(viewsets.GenericViewSet):
+    queryset = District.objects.all()
+    serializer_class = DistrictSerializer 
+
+    def list(self, request):
+        serializer = self.serializer_class(self.queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+   
+    @action(detail=True, methods=["get"], url_name="streets", url_path="streets", serializer_class=StreetSerializer, queryset=Street.objects.all())
+    def streets(self, request, pk=None):
+        streets = self.queryset.filter(district_id=pk)
+        serializer = self.serializer_class(streets, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
