@@ -46,3 +46,18 @@ class DistrictViewSet(viewsets.GenericViewSet):
         streets = self.queryset.filter(district_id=pk)
         serializer = self.serializer_class(streets, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StreetViewSet(viewsets.GenericViewSet):
+    queryset = Street.objects.all()
+    serializer_class = StreetSerializer
+
+    def list(self, request):
+        serializer = self.serializer_class(self.queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["get"], url_name="houses", url_path="houses", serializer_class=HouseSerializer, queryset=House.objects.all())
+    def houses(self, request, pk=None):
+        houses = self.queryset.filter(street_id=pk)
+        serializer = self.serializer_class(houses, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
