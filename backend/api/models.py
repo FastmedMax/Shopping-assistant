@@ -44,3 +44,9 @@ class Product(models.Model):
 class UserPayment(models.Model):
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="payments")
     cart = models.ForeignKey(UserCart, verbose_name="Корзина", on_delete=models.CASCADE)
+
+
+class UserProduct(models.Model):
+    cart = models.ForeignKey(UserCart, verbose_name="Корзина", on_delete=models.CASCADE, related_name="products")
+    product = models.ForeignKey(Product, verbose_name="Продукт", on_delete=models.CASCADE)
+    count = models.PositiveIntegerField(verbose_name="Колличество")
