@@ -9,3 +9,10 @@ from .serializers import ProductSerializer, UserCartSelizer, CitySerializer, Dis
 
 
 # Create your views here.
+class ProductViewSet(viewsets.GenericViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def list(self, request):
+        serializer = self.serializer_class(self.queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
