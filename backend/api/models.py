@@ -39,3 +39,8 @@ class UserCart(models.Model):
 class Product(models.Model):
     title = models.CharField(verbose_name="Название", max_length=100)
     price = models.PositiveIntegerField(verbose_name="Цена")
+
+
+class UserPayment(models.Model):
+    user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="payments")
+    cart = models.ForeignKey(UserCart, verbose_name="Корзина", on_delete=models.CASCADE)
