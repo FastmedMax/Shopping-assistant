@@ -19,3 +19,8 @@ class District(models.Model):
 class Street(models.Model):
     title = models.CharField(verbose_name="Название улицы", max_length=60)
     district = models.ForeignKey(City, verbose_name="Район", on_delete=models.CASCADE, related_name="streets")
+
+
+class House(models.Model):
+    title = models.CharField(verbose_name="Название дома", max_length=60)
+    street = models.ForeignKey(City, verbose_name="Улица", on_delete=models.CASCADE, related_name="houses")
