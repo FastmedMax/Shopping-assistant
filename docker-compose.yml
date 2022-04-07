@@ -21,6 +21,14 @@ services:
       - ./.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/app/web/staticfiles
+    ports:
+      - 8000:80
+    depends_on:
+      - web
 
 volumes:
   static_volume:
