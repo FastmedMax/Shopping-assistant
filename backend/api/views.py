@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 
 from .models import Product, UserCart, City, District, Street, House
 
-from .serializers import ProductSerializer, UserCartSelizer, CitySerializer, DistrictSerializer, StreetSerializer, HouseSerializer
+from .serializers import ProductSerializer, UserCartSerializer, CitySerializer, DistrictSerializer, StreetSerializer, HouseSerializer
 
 
 # Create your views here.
