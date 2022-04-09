@@ -13,10 +13,12 @@ from .views import (
 app_name = 'api'
 
 router = DefaultRouter()
+router.register(r"users", UserViewSet, basename="users")
 router.register(r"products", ProductViewSet, basename="products")
 router.register(r"cities", CityViewSet, basename="cities")
 router.register(r"districts", DistrictViewSet, basename="districts")
 router.register(r"streets", StreetViewSet, basename="streets")
+router.register(r"cart", UserCartViewSet, basename="cart")
 
 urlpatterns = [
 ] + router.urls
