@@ -19,6 +19,25 @@ from .serializers import (
 
 
 # Create your views here.
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def retrieve(self, request, pk=None):
+        user = self.get_object()
+        serializer = self.serializer_class(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid(raise_exception=False):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ProductViewSet(viewsets.GenericViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
