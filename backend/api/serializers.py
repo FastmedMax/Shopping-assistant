@@ -56,3 +56,10 @@ class UserProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProduct
         exclude = ("cart", "id")
+
+
+class UserCartDetailSerializer(serializers.ModelSerializer):
+    products = UserProductDetailSerializer(many=True)
+    class Meta:
+        model = UserCart
+        exclude = ("id", "user")
