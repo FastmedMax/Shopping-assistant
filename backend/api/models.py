@@ -27,7 +27,7 @@ class House(models.Model):
 
 
 class User(models.Model):
-    id = models.CharField(verbose_name="ID курьера", max_length=255, primary_key=True)
+    id = models.CharField(verbose_name="ID пользователя", max_length=255, primary_key=True)
 
 
 class UserCart(models.Model):
