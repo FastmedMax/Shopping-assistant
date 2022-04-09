@@ -90,3 +90,32 @@ class StreetViewSet(viewsets.GenericViewSet):
         houses = self.queryset.filter(street_id=pk)
         serializer = self.serializer_class(houses, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserCartViewSet(viewsets.GenericViewSet):
+    queryset = UserCart.objects.all()
+    serializer_class = UserCartSerializer
+
+    def retrieve(self, request, pk=None):
+        cart = self.get_object()
+        serializer = UserCartDetailSerializer(cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid(raise_exception=False):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["post"], url_name="products", url_path="products", serializer_class=UserProductSerializer, queryset=UserProduct.objects.all())
+    def products(self, request, pk=None):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid(raise_exception=False):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
