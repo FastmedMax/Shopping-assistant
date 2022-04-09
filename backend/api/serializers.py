@@ -3,6 +3,11 @@ from rest_framework import serializers
 from .models import User, Product, UserCart, City, District, Street, House, UserProduct
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = "__all__"
+
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
