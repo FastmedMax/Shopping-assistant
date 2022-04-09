@@ -19,7 +19,6 @@ class UserCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCart
         fields = "__all__"
-        depth = 2
 
 
 class CitySerializer(serializers.ModelSerializer):
