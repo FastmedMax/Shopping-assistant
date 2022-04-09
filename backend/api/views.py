@@ -3,9 +3,19 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from .models import Product, UserCart, City, District, Street, House
+from .models import User, Product, UserCart, City, District, Street, House, UserProduct
 
-from .serializers import ProductSerializer, UserCartSerializer, CitySerializer, DistrictSerializer, StreetSerializer, HouseSerializer
+from .serializers import (
+    UserSerializer,
+    ProductSerializer,
+    UserCartSerializer,
+    CitySerializer,
+    DistrictSerializer,
+    StreetSerializer,
+    HouseSerializer,
+    UserProductSerializer,
+    UserCartDetailSerializer
+)
 
 
 # Create your views here.
