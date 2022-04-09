@@ -49,3 +49,10 @@ class UserProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProduct
         fields = "__all__"
+
+
+class UserProductDetailSerializer(serializers.ModelSerializer):
+    product = serializers.SlugRelatedField(slug_field="title", read_only=True)
+    class Meta:
+        model = UserProduct
+        exclude = ("cart", "id")
