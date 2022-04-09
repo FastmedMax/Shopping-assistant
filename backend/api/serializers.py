@@ -43,3 +43,9 @@ class HouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = House
         fields = "__all__"
+
+
+class UserProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProduct
+        fields = "__all__"
