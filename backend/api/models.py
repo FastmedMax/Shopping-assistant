@@ -50,3 +50,9 @@ class UserProduct(models.Model):
     cart = models.ForeignKey(UserCart, verbose_name="Корзина", on_delete=models.CASCADE, related_name="products")
     product = models.ForeignKey(Product, verbose_name="Продукт", on_delete=models.CASCADE)
     count = models.PositiveIntegerField(verbose_name="Колличество")
+
+    def save(self, *args, **kwargs) -> None:
+        cost = self.product.price * self.count
+        self.cart.price += cost
+        self.cart.save()
+        return super().save(*args, **kwargs)
