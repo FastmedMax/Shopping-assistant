@@ -344,5 +344,31 @@ async def turn_list_districts(call: types.CallbackQuery, state: FSMContext):
         chat_id=chat_id, message_id=message_id, reply_markup=markup
     )
 
+
+@dp.callback_query_handler(lambda call: call.data.startswith("districts"), state=Buy.district)
+async def district(query: types.CallbackQuery, state: FSMContext):
+    await Buy.next()
+
+    keyboard = list(chain(*query.message.reply_markup.inline_keyboard))
+    district = next(item["text"] for item in keyboard if item["callback_data"] == query.data)
+    district_id = query.data.split(":")[1]
+
+    async with state.proxy() as data:
+        data["district"] = district
+        data["district_id"] = district_id
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{URL}/api/districts/{district_id}/streets/") as response:
+            if response.status == 200:
+                streets = await response.json()
+            else:
+                logger.error(await response.text())
+
+    markup = paginator(streets, "streets")
+
+    text = "Выберите улица"
+
+    await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
