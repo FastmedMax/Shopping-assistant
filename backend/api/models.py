@@ -5,9 +5,17 @@ from django.db import models
 class Сourier(models.Model):
     id = models.CharField(verbose_name="ID курьера", max_length=255, primary_key=True)
 
+    class Meta:
+        verbose_name = "Курьер"
+        verbose_name_plural = "Курьеры"
+
 
 class City(models.Model):
     title = models.CharField(verbose_name="Название города", max_length=60)
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "города"
 
 
 class District(models.Model):
@@ -15,19 +23,35 @@ class District(models.Model):
     city = models.ForeignKey(City, verbose_name="Город", on_delete=models.CASCADE, related_name="districts")
     courier = models.ForeignKey(Сourier, verbose_name="Курьер", on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name = "Район"
+        verbose_name_plural = "Районы"
+
 
 class Street(models.Model):
     title = models.CharField(verbose_name="Название улицы", max_length=60)
     district = models.ForeignKey(District, verbose_name="Район", on_delete=models.CASCADE, related_name="streets")
+
+    class Meta:
+        verbose_name = "Улица"
+        verbose_name_plural = "Улицы"
 
 
 class House(models.Model):
     title = models.CharField(verbose_name="Название дома", max_length=60)
     street = models.ForeignKey(Street, verbose_name="Улица", on_delete=models.CASCADE, related_name="houses")
 
+    class Meta:
+        verbose_name = "Дом"
+        verbose_name_plural = "Дома"
+
 
 class User(models.Model):
     id = models.CharField(verbose_name="ID пользователя", max_length=255, primary_key=True)
+
+    class Meta:
+        verbose_name = "Пользоваетель"
+        verbose_name_plural = "Пользователи"
 
 
 class UserCart(models.Model):
@@ -35,10 +59,18 @@ class UserCart(models.Model):
     price = models.PositiveIntegerField(verbose_name="Итог", default=0)
     address = models.TextField(verbose_name="Адресс", blank=True)
 
+    class Meta:
+        verbose_name = "Корзина"
+        verbose_name_plural = "Корзины"
+
 
 class Product(models.Model):
     title = models.CharField(verbose_name="Название", max_length=100)
     price = models.PositiveIntegerField(verbose_name="Цена")
+
+    class Meta:
+        verbose_name = "Продукт"
+        verbose_name_plural = "Продукты"
 
 
 class UserPayment(models.Model):
@@ -56,3 +88,7 @@ class UserProduct(models.Model):
         self.cart.price += cost
         self.cart.save()
         return super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Продукт пользователя"
+        verbose_name_plural = "Продукты пользователя"
