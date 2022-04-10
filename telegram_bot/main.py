@@ -17,6 +17,16 @@ bot = Bot(token=API_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
+class Buy(StatesGroup):
+    product = State()
+    amount = State()
+    add = State()
+    city = State()
+    district = State()
+    street = State()
+    house = State()
+    payment = State()
+
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
