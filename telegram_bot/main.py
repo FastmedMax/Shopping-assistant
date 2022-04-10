@@ -218,5 +218,14 @@ async def continue_buy(message: types.Message, state: FSMContext):
 
     await bot.send_message(chat_id=message.from_user.id, text=text, reply_markup=markup)
 
+
+@dp.callback_query_handler(lambda call: call.data == "Cancel", state="*")
+async def cancel(message: types.Message, state: FSMContext):
+    await state.finish()
+
+    text = "Покупака отменена"
+
+    await bot.send_message(chat_id=message.from_user.id, text=text)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
