@@ -90,5 +90,32 @@ def turn_page(call: types.CallbackQuery, object, name):
 
     return markup
 
+
+@dp.message_handler(commands="start")
+async def start_cmd_handler(message: types.Message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+
+    markup.add(
+        types.InlineKeyboardButton("Заказать товар")
+    )
+
+    user_id = message.from_user.id
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{URL}/api/users/{user_id}") as response:
+            if response.status == 200:
+                pass
+            else:
+                data = {"id": user_id}
+                async with session.post(f"{URL}/api/users/", json=data):
+                    if not response.status == 201:
+                        logger.error(await response.text())
+
+    text = (
+        "Hi"
+    )
+
+    await message.reply(text=text, reply_markup=markup)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
