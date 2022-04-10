@@ -259,5 +259,22 @@ async def product(query: types.CallbackQuery, state: FSMContext):
 
     await bot.send_message(chat_id=query.from_user.id, text=text)
 
+
+@dp.callback_query_handler(lambda call: call.data == "Continue", state=Buy.amount)
+async def cities(query: types.CallbackQuery, state: FSMContext):
+    await Buy.city.set()
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{URL}/api/cities/") as response:
+            if response.status == 200:
+                cities = await response.json()
+            else:
+                logger.error(await response.text())
+
+    markup = paginator(cities, "cities")
+
+    text = "Выберите город"
+
+    await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
