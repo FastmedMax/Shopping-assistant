@@ -227,5 +227,22 @@ async def cancel(message: types.Message, state: FSMContext):
 
     await bot.send_message(chat_id=message.from_user.id, text=text)
 
+
+@dp.callback_query_handler(lambda call: call.data == "Add", state=Buy.amount)
+async def order(query: types.CallbackQuery):
+    await Buy.next()
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{URL}/api/products/") as response:
+            if response.status == 200:
+                products = await response.json()
+            else:
+                logger.error(await response.text())
+
+    markup = paginator(products, "products")
+
+    text = "Выберете товар"
+
+    await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
