@@ -244,5 +244,20 @@ async def order(query: types.CallbackQuery):
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
+
+@dp.callback_query_handler(lambda call: call.data.startswith("products"), state=Buy.add)
+async def product(query: types.CallbackQuery, state: FSMContext):
+    await Buy.product.set()
+
+    product = query.data.split(":")
+    id = product[1]
+
+    async with state.proxy() as data:
+        data["product"] = id
+
+    text = "Выберите колличество товара"
+
+    await bot.send_message(chat_id=query.from_user.id, text=text)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
