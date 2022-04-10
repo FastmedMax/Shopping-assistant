@@ -117,5 +117,21 @@ async def start_cmd_handler(message: types.Message):
 
     await message.reply(text=text, reply_markup=markup)
 
+
+@dp.message_handler(lambda call: call.text == "Заказать товар")
+async def order(query: types.CallbackQuery):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{URL}/api/products/") as response:
+            if response.status == 200:
+                products = await response.json()
+            else:
+                logger.error(await response.text())
+
+    markup = paginator(products, "products")
+
+    text = "Выберете товар"
+
+    await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
