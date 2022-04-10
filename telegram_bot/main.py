@@ -53,5 +53,42 @@ def paginator(objects, name) -> types.InlineKeyboardMarkup:
 
     return markup
 
+
+def turn_page(call: types.CallbackQuery, object, name):
+    nav_buttons = call.message.reply_markup.inline_keyboard[-1]
+    num_pages_btn = nav_buttons[1]
+    current_page, count_pages = map(int, num_pages_btn.text.split("/"))
+
+    if current_page == count_pages and call.data == f"next_{name}":
+        return call.message.reply_markup
+    elif current_page == 1 and call.data == f"previous_{name}":
+        return call.message.reply_markup
+
+    if call.data == f"previous_{name}":
+        next_page = current_page - 1
+    else:
+        next_page = current_page + 1
+    num_pages_btn.text = f"{next_page}/{count_pages}"
+    nav_buttons[1] = num_pages_btn
+
+    markup = types.InlineKeyboardMarkup()
+    start_index_1 = current_page * 8
+    if next_page == 1:
+        start_index_1 = 0
+    start_index_2 = start_index_1 + 1
+    stop_index = next_page * 8
+
+    for item_1, item_2 in zip_longest(object[start_index_1:stop_index:2], object[start_index_2:stop_index:2]):
+        buttons = []
+        if item_1:
+            buttons.append(types.InlineKeyboardButton(text=item_1['title'], callback_data=f"{name}:{item_1['id']}"))
+        if item_2:
+            buttons.append(types.InlineKeyboardButton(text=item_2['title'], callback_data=f"{name}:{item_2['id']}"))
+        markup.row(*buttons)
+
+    markup.row(*nav_buttons)
+
+    return markup
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
