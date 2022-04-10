@@ -176,5 +176,47 @@ async def product(query: types.CallbackQuery, state: FSMContext):
 
     await bot.send_message(chat_id=query.from_user.id, text=text)
 
+
+@dp.message_handler(lambda call: call.text.isnumeric(), state=Buy.product)
+async def continue_buy(message: types.Message, state: FSMContext):
+    await Buy.next()
+
+    callback = {}
+
+    async with state.proxy() as data:
+        callback["product"] = data["product"]
+        callback["cart"] = data["cart"]
+
+    callback["count"] = message.text
+    cart = 0
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{URL}/api/cart/{callback['cart']}/products/", json=callback) as response:
+            if not response.status == 201:
+                logger.error(await response.text())
+        async with session.get(f"{URL}/api/cart/{callback['cart']}/") as response:
+            if response.status == 200:
+                cart = await response.json()
+            else:
+                logger.error(await response.text())
+
+    text = (
+        "Ваши товары:\n"
+    )
+    for product in cart["products"]:
+        text += product["product"] + " - " + str(product["count"]) + "\n"
+
+    markup = types.InlineKeyboardMarkup(resize_keyboard=False)
+
+    markup.row(
+        types.InlineKeyboardButton("Отменить покупку", callback_data = "Cancel"),
+        types.InlineKeyboardButton("Добавить продукт", callback_data = "Add"),
+    )
+    markup.add(
+        types.InlineKeyboardButton("Продолжить", callback_data = "Continue")
+    )
+
+    await bot.send_message(chat_id=message.from_user.id, text=text, reply_markup=markup)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
