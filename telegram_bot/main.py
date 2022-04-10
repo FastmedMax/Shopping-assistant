@@ -152,5 +152,29 @@ async def turn_list_products(call: types.CallbackQuery):
         chat_id=chat_id, message_id=message_id, reply_markup=markup
     )
 
+
+@dp.callback_query_handler(lambda call: call.data.startswith("products"))
+async def product(query: types.CallbackQuery, state: FSMContext):
+    await Buy.product.set()
+
+    callback = {"user": query.from_user.id}
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{URL}/api/cart/", json=callback) as response:
+            if not response.status == 201:
+                logger.error(await response.text())
+            response = await response.json()
+
+    product = query.data.split(":")
+    id = product[1]
+
+    async with state.proxy() as data:
+        data["product"] = id
+        data["cart"] = response["id"]
+
+    text = "Выберите колличество товара"
+
+    await bot.send_message(chat_id=query.from_user.id, text=text)
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
