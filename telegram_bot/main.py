@@ -133,5 +133,24 @@ async def order(query: types.CallbackQuery):
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
+
+@dp.callback_query_handler(lambda call: call.data in ["previous_products", "next_products"], state="*")
+async def turn_list_products(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    message_id = call.message.message_id
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{URL}/api/products/") as response:
+            if response.status == 200:
+                products = await response.json()
+            else:
+                logger.error(await response.text())
+
+    markup = turn_page(call, products, "products")
+
+    await bot.edit_message_reply_markup(
+        chat_id=chat_id, message_id=message_id, reply_markup=markup
+    )
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
