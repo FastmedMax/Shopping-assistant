@@ -75,6 +75,12 @@ class DistrictViewSet(viewsets.GenericViewSet):
         streets = self.queryset.filter(district_id=pk)
         serializer = self.serializer_class(streets, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+    @action(detail=True, methods=["get"], url_name="courier", url_path="courier")
+    def courier(self, request, pk=None):
+        district = self.get_object()
+        return Response({"courier_id": district.courier.id}, status=status.HTTP_200_OK)
 
 
 class StreetViewSet(viewsets.GenericViewSet):
