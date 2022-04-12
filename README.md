@@ -21,6 +21,10 @@ DB_PORT=
 DB_HOST=                  # For use local database, set `host.docker.internal` 
 ```
 
+```
+TELEGRAM_TOKEN=
+```
+
 # Local Development
 
 Start the dev server for local development:
