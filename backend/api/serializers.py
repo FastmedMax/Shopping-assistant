@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Product, UserCart, City, District, Street, House, UserProduct
+from .models import User, Product, UserCart, City, District, Street, House, UserProduct, Сourier
 
 
 class UserSerializer(serializers.ModelSerializer):
