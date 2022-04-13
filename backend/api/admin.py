@@ -17,11 +17,20 @@ from .models import (
 
 
 # Register your models here.
-admin.site.register(Product)
 admin.site.register(Сourier)
 
 
 class ProductsInline(nested_admin.NestedStackedInline):
+    model = Product
+    extra = 0
+    classes = ["collapse"]
+
+@admin.register(Category)
+class Category(nested_admin.NestedModelAdmin):
+    inlines = (ProductsInline,)
+
+
+class UserProductsInline(nested_admin.NestedStackedInline):
     model = UserProduct
     extra = 0
     classes = ["collapse"]
@@ -29,7 +38,7 @@ class ProductsInline(nested_admin.NestedStackedInline):
 class CartInline(nested_admin.NestedStackedInline):
     model = UserCart
     extra = 0
-    inlines = (ProductsInline,)
+    inlines = (UserProductsInline,)
     classes = ["collapse"]
 
 @admin.register(User)
