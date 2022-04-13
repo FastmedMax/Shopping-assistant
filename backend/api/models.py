@@ -67,9 +67,21 @@ class UserCart(models.Model):
         verbose_name_plural = "Корзины"
 
 
+class Category(models.Model):
+    title = models.CharField(verbose_name="Название", max_length=100)
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+    def __str__(self):
+        return self.title
+
+
 class Product(models.Model):
     title = models.CharField(verbose_name="Название", max_length=100)
     price = models.PositiveIntegerField(verbose_name="Цена")
+    category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.CASCADE, related_name="category")
 
     class Meta:
         verbose_name = "Продукт"
