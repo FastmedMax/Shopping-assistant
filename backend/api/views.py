@@ -49,12 +49,18 @@ class UserViewSet(viewsets.GenericViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProductViewSet(viewsets.GenericViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+class CategoryViewSet(viewsets.GenericViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["get"], url_name="products", url_path="products", serializer_class=ProductSerializer, queryset=Product.objects.all())
+    def products(self, request, pk=None):
+        products = self.queryset.filter(category_id=pk)
+        serializer = self.serializer_class(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
