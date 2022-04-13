@@ -3,7 +3,17 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from .models import User, Product, UserCart, City, District, Street, House, UserProduct
+from .models import (
+    User,
+    Product,
+    UserCart,
+    City,
+    District,
+    Street,
+    House,
+    UserProduct,
+    Category
+)
 
 from .serializers import (
     UserSerializer,
@@ -14,7 +24,8 @@ from .serializers import (
     StreetSerializer,
     HouseSerializer,
     UserProductSerializer,
-    UserCartDetailSerializer
+    UserCartDetailSerializer,
+    CategorySerializer
 )
 
 
