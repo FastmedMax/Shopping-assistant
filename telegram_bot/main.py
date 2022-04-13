@@ -18,14 +18,16 @@ storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
 class Buy(StatesGroup):
+    cart = State()
+    category = State()
     product = State()
     amount = State()
-    add = State()
     city = State()
     district = State()
     street = State()
     house = State()
     payment = State()
+    courier = State()
 
 
 def paginator(objects, name) -> types.InlineKeyboardMarkup:
@@ -119,9 +121,60 @@ async def start_cmd_handler(message: types.Message):
 
 
 @dp.message_handler(lambda call: call.text == "Заказать товар")
-async def order(query: types.CallbackQuery):
+async def choose_category(query: types.CallbackQuery, state: FSMContext):
+    await Buy.category.set()
+    user_id = query.from_user.id
+    data = {"user": user_id}
+
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{URL}/api/products/") as response:
+        async with session.get(f"{URL}/api/categories/") as response:
+            if response.status == 200:
+                categories = await response.json()
+            else:
+                logger.error(await response.text())
+        async with session.post(f"{URL}/api/cart/", json=data) as response:
+            if not response.status == 201:
+                logger.error(await response.text())
+            response = await response.json()
+
+    async with state.proxy() as data:
+        data["cart"] = response["id"]
+
+    markup = paginator(categories, "categories")
+
+    text = "Выберете категорию"
+
+    await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
+
+
+@dp.callback_query_handler(lambda call: call.data in ["previous_categories", "next_categories"], state="*")
+async def turn_list_categories(call: types.CallbackQuery):
+    chat_id = call.message.chat.id
+    message_id = call.message.message_id
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{URL}/api/categories/") as response:
+            if response.status == 200:
+                categories = await response.json()
+            else:
+                logger.error(await response.text())
+
+    markup = turn_page(call, categories, "categories")
+
+    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
+
+
+@dp.callback_query_handler(lambda call: call.data.startswith("categories"), state=Buy.category)
+async def choose_product(query: types.CallbackQuery, state: FSMContext):
+    await Buy.product.set()
+    categories = query.data.split(":")
+    id = categories[1]
+
+    async with state.proxy() as data:
+        data["category"] = id
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{URL}/api/categories/{id}/products/") as response:
             if response.status == 200:
                 products = await response.json()
             else:
@@ -135,12 +188,16 @@ async def order(query: types.CallbackQuery):
 
 
 @dp.callback_query_handler(lambda call: call.data in ["previous_products", "next_products"], state="*")
-async def turn_list_products(call: types.CallbackQuery):
+async def turn_list_products(call: types.CallbackQuery, state: FSMContext):
     chat_id = call.message.chat.id
     message_id = call.message.message_id
+    id = 0
+
+    async with state.proxy() as data:
+        id = data["category"]
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{URL}/api/products/") as response:
+        async with session.get(f"{URL}/api/categories/{id}/products/") as response:
             if response.status == 200:
                 products = await response.json()
             else:
@@ -148,39 +205,26 @@ async def turn_list_products(call: types.CallbackQuery):
 
     markup = turn_page(call, products, "products")
 
-    await bot.edit_message_reply_markup(
-        chat_id=chat_id, message_id=message_id, reply_markup=markup
-    )
+    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
 
 
-@dp.callback_query_handler(lambda call: call.data.startswith("products"))
-async def product(query: types.CallbackQuery, state: FSMContext):
-    await Buy.product.set()
-
-    callback = {"user": query.from_user.id}
-
-    async with aiohttp.ClientSession() as session:
-        async with session.post(f"{URL}/api/cart/", json=callback) as response:
-            if not response.status == 201:
-                logger.error(await response.text())
-            response = await response.json()
+@dp.callback_query_handler(lambda call: call.data.startswith("products"), state=Buy.product)
+async def process_product(query: types.CallbackQuery, state: FSMContext):
+    await Buy.amount.set()
 
     product = query.data.split(":")
     id = product[1]
 
     async with state.proxy() as data:
         data["product"] = id
-        data["cart"] = response["id"]
 
     text = "Выберите колличество товара"
 
     await bot.send_message(chat_id=query.from_user.id, text=text)
 
 
-@dp.message_handler(lambda call: call.text.isnumeric(), state=Buy.product)
-async def continue_buy(message: types.Message, state: FSMContext):
-    await Buy.next()
-
+@dp.message_handler(lambda call: call.text.isnumeric(), state=Buy.amount)
+async def process_count_product(message: types.Message, state: FSMContext):
     callback = {}
 
     async with state.proxy() as data:
@@ -228,36 +272,22 @@ async def cancel(message: types.Message, state: FSMContext):
     await bot.send_message(chat_id=message.from_user.id, text=text)
 
 
-@dp.callback_query_handler(lambda call: call.data == "Add", state=Buy.amount)
-async def order(query: types.CallbackQuery):
-    await Buy.next()
+
+@dp.callback_query_handler(lambda call: call.data == "Add", state="*")
+async def categories(query: types.CallbackQuery):
+    await Buy.category.set()
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{URL}/api/products/") as response:
+        async with session.get(f"{URL}/api/categories/") as response:
             if response.status == 200:
-                products = await response.json()
+                categories = await response.json()
             else:
                 logger.error(await response.text())
 
-    markup = paginator(products, "products")
+    markup = paginator(categories, "categories")
 
-    text = "Выберете товар"
+    text = "Выберете категорию"
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
-
-
-@dp.callback_query_handler(lambda call: call.data.startswith("products"), state=Buy.add)
-async def product(query: types.CallbackQuery, state: FSMContext):
-    await Buy.product.set()
-
-    product = query.data.split(":")
-    id = product[1]
-
-    async with state.proxy() as data:
-        data["product"] = id
-
-    text = "Выберите колличество товара"
-
-    await bot.send_message(chat_id=query.from_user.id, text=text)
 
 
 @dp.callback_query_handler(lambda call: call.data == "Continue", state=Buy.amount)
