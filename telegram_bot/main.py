@@ -291,9 +291,7 @@ async def turn_list_cities(call: types.CallbackQuery):
 
     markup = turn_page(call, cities, "cities")
 
-    await bot.edit_message_reply_markup(
-        chat_id=chat_id, message_id=message_id, reply_markup=markup
-    )
+    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
 
 
 @dp.callback_query_handler(lambda call: call.data.startswith("cities"), state=Buy.city)
@@ -340,9 +338,7 @@ async def turn_list_districts(call: types.CallbackQuery, state: FSMContext):
 
     markup = turn_page(call, districts, "districts")
 
-    await bot.edit_message_reply_markup(
-        chat_id=chat_id, message_id=message_id, reply_markup=markup
-    )
+    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
 
 
 @dp.callback_query_handler(lambda call: call.data.startswith("districts"), state=Buy.district)
@@ -389,9 +385,7 @@ async def turn_list_streets(call: types.CallbackQuery, state: FSMContext):
 
     markup = turn_page(call, streets, "streets")
 
-    await bot.edit_message_reply_markup(
-        chat_id=chat_id, message_id=message_id, reply_markup=markup
-    )
+    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
 
 
 @dp.callback_query_handler(lambda call: call.data.startswith("streets"), state=Buy.street)
@@ -438,8 +432,8 @@ async def turn_list_houses(call: types.CallbackQuery, state: FSMContext):
 
     markup = turn_page(call, houses, "houses")
 
-    await bot.edit_message_reply_markup(
-        chat_id=chat_id, message_id=message_id, reply_markup=markup
+    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
+
     )
 
 if __name__ == "__main__":
