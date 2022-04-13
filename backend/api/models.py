@@ -17,6 +17,9 @@ class City(models.Model):
         verbose_name = "Город"
         verbose_name_plural = "города"
 
+    def __str__(self):
+        return self.title
+
 
 class District(models.Model):
     title = models.CharField(verbose_name="Название района", max_length=60)
