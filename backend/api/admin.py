@@ -2,7 +2,18 @@ from django.contrib import admin
 
 import nested_admin
 
-from .models import Product, UserCart, City, District, Street, House, Сourier, User, UserProduct
+from .models import (
+    Product,
+    UserCart,
+    City,
+    District,
+    Street,
+    House,
+    Сourier,
+    User,
+    UserProduct,
+    Category
+)
 
 
 # Register your models here.
