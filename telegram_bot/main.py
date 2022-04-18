@@ -114,7 +114,14 @@ async def start_cmd_handler(message: types.Message):
                         logger.error(await response.text())
 
     text = (
-        "Hi"
+        "На что способен этот бот?\n"
+        "«Махорка»-бот – это сервис, через который Вы можете приобрести табачные и "
+        "никотиносодержащие изделия, в том числе табаки для кальяна, вейпы, pod-системы, "
+        "электронные сигареты и так далее. Также у вас есть возможность купить различные "
+        "приборы для курения табака, например, кальяны.\n"
+        "Мы осуществляем доставку курьером до дома (или до двери) по указанному Вами адресу, чем "
+        "значительно экономим Ваше время и силы на поиск нужного товара и покупку в магазине, "
+        "(а демократичные цены не смогут Вас не обрадовать)."
     )
 
     await message.reply(text=text, reply_markup=markup)
@@ -182,7 +189,7 @@ async def choose_product(query: types.CallbackQuery, state: FSMContext):
 
     markup = paginator(products, "products")
 
-    text = "Выберете товар"
+    text = "Пожалуйста, выберите необходимый товар из предложенного списка."
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
@@ -218,7 +225,7 @@ async def process_product(query: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         data["product"] = id
 
-    text = "Выберите колличество товара"
+    text = "Пожалуйста, введите количество необходимого товара числом без текстовых подписей."
 
     await bot.send_message(chat_id=query.from_user.id, text=text)
 
@@ -245,7 +252,7 @@ async def process_count_product(message: types.Message, state: FSMContext):
                 logger.error(await response.text())
 
     text = (
-        "Ваши товары:\n"
+        "Выбранные товары:\n"
     )
     for product in cart["products"]:
         text += product["product"] + " - " + str(product["count"]) + "\n"
@@ -267,7 +274,7 @@ async def process_count_product(message: types.Message, state: FSMContext):
 async def cancel(message: types.Message, state: FSMContext):
     await state.finish()
 
-    text = "Покупака отменена"
+    text = "Покупака отменена."
 
     await bot.send_message(chat_id=message.from_user.id, text=text)
 
@@ -302,7 +309,7 @@ async def cities(query: types.CallbackQuery, state: FSMContext):
 
     markup = paginator(cities, "cities")
 
-    text = "Выберите город"
+    text = "Пожалуйста, укажите город, в который нужно осуществить доставку"
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
@@ -345,7 +352,7 @@ async def city(query: types.CallbackQuery, state: FSMContext):
 
     markup = paginator(districts, "districts")
 
-    text = "Выберите район"
+    text = "Пожалуйста, укажите район города, в который нужно осуществить доставку"
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
@@ -392,7 +399,7 @@ async def district(query: types.CallbackQuery, state: FSMContext):
 
     markup = paginator(streets, "streets")
 
-    text = "Выберите улица"
+    text = "Пожалуйста, укажите название улицы, на которую нужно осуществить доставку"
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
@@ -439,7 +446,7 @@ async def street(query: types.CallbackQuery, state: FSMContext):
 
     markup = paginator(houses, "houses")
 
-    text = "Выберите дом"
+    text = "Пожалуйста, укажите номер дома, к которому нужно осуществить доставку"
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
