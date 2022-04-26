@@ -25,6 +25,7 @@ class District(models.Model):
 class Street(models.Model):
     title = models.CharField(verbose_name="Название улицы", max_length=60)
     district = models.ForeignKey(District, verbose_name="Район", on_delete=models.CASCADE, related_name="streets")
+    price = models.PositiveIntegerField(verbose_name="Цена доставки", default=0)
 
     class Meta:
         verbose_name = "Улица"
