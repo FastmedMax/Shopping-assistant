@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User, Product, UserCart, City, District, Street, House, UserProduct, Category
+from .models import User, Product, UserCart, City, District, Street, UserProduct, Category
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -42,12 +42,6 @@ class DistrictSerializer(serializers.ModelSerializer):
 class StreetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Street
-        fields = "__all__"
-
-
-class HouseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = House
         fields = "__all__"
 
 
