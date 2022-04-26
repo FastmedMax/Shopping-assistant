@@ -44,6 +44,7 @@ class UserCart(models.Model):
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="carts")
     price = models.PositiveIntegerField(verbose_name="Итог", default=0)
     address = models.TextField(verbose_name="Адресс", blank=True)
+    phone = models.CharField(verbose_name="Номер телефона", max_length=30, blank=True)
 
     class Meta:
         verbose_name = "Корзина"
