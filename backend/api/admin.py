@@ -20,6 +20,7 @@ class ProductsInline(nested_admin.NestedStackedInline):
     extra = 0
     classes = ["collapse"]
 
+
 @admin.register(Category)
 class Category(nested_admin.NestedModelAdmin):
     inlines = (ProductsInline,)
@@ -30,11 +31,13 @@ class UserProductsInline(nested_admin.NestedStackedInline):
     extra = 0
     classes = ["collapse"]
 
+
 class CartInline(nested_admin.NestedStackedInline):
     model = UserCart
     extra = 0
     inlines = (UserProductsInline,)
     classes = ["collapse"]
+
 
 @admin.register(User)
 class User(nested_admin.NestedModelAdmin):
@@ -52,6 +55,7 @@ class DistrictInline(nested_admin.NestedStackedInline):
     extra = 0
     classes = ["collapse"]
     inlines = (StreetInline,)
+
 
 @admin.register(City)
 class User(nested_admin.NestedModelAdmin):
