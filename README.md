@@ -14,14 +14,15 @@ DJANGO_SECRET_KEY=        # Can be generated here: https://djecrety.ir/
 DJANGO_ALLOWED_HOSTS=     # hosts split by whitespace
 DJANGO_DEBUG=             # 1 or 0
 
+DJANGO_HOST=
+CSRF_TRUSTED_ORIGINS=
+
 DB_NAME=
 DB_USER=
 DB_PASSWORD=
 DB_PORT=
-DB_HOST=                  # For use local database, set `host.docker.internal` 
-```
+DB_HOST=                  # For use local database, set `host.docker.internal`
 
-```
 TELEGRAM_TOKEN=
 ```
 
