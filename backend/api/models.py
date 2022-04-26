@@ -32,15 +32,6 @@ class Street(models.Model):
         verbose_name_plural = "Улицы"
 
 
-class House(models.Model):
-    title = models.CharField(verbose_name="Название дома", max_length=60)
-    street = models.ForeignKey(Street, verbose_name="Улица", on_delete=models.CASCADE, related_name="houses")
-
-    class Meta:
-        verbose_name = "Дом"
-        verbose_name_plural = "Дома"
-
-
 class User(models.Model):
     id = models.CharField(verbose_name="ID пользователя", max_length=255, primary_key=True)
 
