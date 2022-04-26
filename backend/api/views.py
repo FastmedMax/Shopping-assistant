@@ -124,6 +124,17 @@ class UserCartViewSet(viewsets.GenericViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def partial_update(self, request, pk=None):
+        cart = self.get_object()
+        serializer = self.serializer_class(cart, data=request.data, partial=True)
+
+        if serializer.is_valid(raise_exception=False):
+            serializer.update(cart, serializer.validated_data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     @action(detail=True, methods=["post"], url_name="products", url_path="products", serializer_class=UserProductSerializer, queryset=UserProduct.objects.all())
     def products(self, request, pk=None):
