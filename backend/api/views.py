@@ -10,7 +10,6 @@ from .models import (
     City,
     District,
     Street,
-    House,
     UserProduct,
     Category
 )
@@ -22,7 +21,6 @@ from .serializers import (
     CitySerializer,
     DistrictSerializer,
     StreetSerializer,
-    HouseSerializer,
     UserProductSerializer,
     UserCartDetailSerializer,
     CategorySerializer
@@ -106,12 +104,6 @@ class StreetViewSet(viewsets.GenericViewSet):
 
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=["get"], url_name="houses", url_path="houses", serializer_class=HouseSerializer, queryset=House.objects.all())
-    def houses(self, request, pk=None):
-        houses = self.queryset.filter(street_id=pk)
-        serializer = self.serializer_class(houses, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
