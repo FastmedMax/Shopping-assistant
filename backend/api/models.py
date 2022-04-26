@@ -16,7 +16,6 @@ class City(models.Model):
 class District(models.Model):
     title = models.CharField(verbose_name="Название района", max_length=60)
     city = models.ForeignKey(City, verbose_name="Город", on_delete=models.CASCADE, related_name="districts")
-    courier = models.ForeignKey(Сourier, verbose_name="Курьер", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Район"
