@@ -628,28 +628,18 @@ async def payment(message: types.Message, state: FSMContext):
     await bot.send_message(chat_id=message.from_user.id, text=f"Спасибо! Пожалуйста, оплатите товар:\n{bill.pay_url}", reply_markup=markup)
 
 
-    await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
-
-
-@dp.callback_query_handler(lambda call: call.data in ["previous_streets", "next_streets"], state=Buy.street)
-async def turn_list_streets(call: types.CallbackQuery, state: FSMContext):
-    chat_id = call.message.chat.id
-    message_id = call.message.message_id
-    district_id = 0
-
+@dp.callback_query_handler(lambda call: call.data == "paied", state=Buy.payment)
+async def successful_payment(query: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
-        district_id = data["district_id"]
+        bill = data["bill"]
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f"{URL}/api/districts/{district_id}/streets/") as response:
-            if response.status == 200:
-                streets = await response.json()
-            else:
-                logger.error(await response.text())
+    if await qiwi_p2p_client.check_if_bill_was_paid(bill):
+        await bot.send_message(chat_id=query.from_user.id, text="Ваш заказ оплачен, ожидайте курьера")
+    else:
+        await bot.send_message(chat_id=query.from_user.id, text="Заказ не оплачен, попробуйте снова")
 
-    markup = turn_page(call, streets, "streets")
+    await state.finish()
 
-    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
 
 
 @dp.callback_query_handler(lambda call: call.data.startswith("streets"), state=Buy.street)
