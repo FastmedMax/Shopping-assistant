@@ -10,6 +10,9 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types.message import ContentType
 
+from glQiwiApi import QiwiP2PClient
+from glQiwiApi.qiwi.clients.p2p.types import Bill
+
 
 URL = os.getenv("DJANGO_HOST")
 API_TOKEN = os.getenv("TELEGRAM_TOKEN")
