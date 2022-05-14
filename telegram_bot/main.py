@@ -14,6 +14,9 @@ from glQiwiApi import QiwiP2PClient
 from glQiwiApi.qiwi.clients.p2p.types import Bill
 
 
+qiwi_p2p_client = QiwiP2PClient(secret_p2p=os.getenv("QIWI_TOKEN"))
+
+
 URL = os.getenv("DJANGO_HOST")
 API_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
