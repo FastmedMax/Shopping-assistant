@@ -542,6 +542,7 @@ async def confirm_order(query: types.CallbackQuery, state: FSMContext):
     """
     async with state.proxy() as data:
         cart_id = data["cart"]
+        street_id = data["street_id"]
 
     markup = types.InlineKeyboardMarkup()
 
@@ -556,6 +557,14 @@ async def confirm_order(query: types.CallbackQuery, state: FSMContext):
                 cart = await response.json()
             else:
                 logger.error(await response.text())
+        async with session.get(f"{URL}/api/streets/{street_id}/") as response:
+            if response.status == 200:
+                street = await response.json()
+            else:
+                logger.error(await response.text())
+
+    async with state.proxy() as data:
+        data["total_price"] = cart["price"] + street["price"]
 
     text = (
         "Поздравляем! Ваш заказ был успешно сформирован\n\n"
