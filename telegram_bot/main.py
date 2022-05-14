@@ -635,60 +635,40 @@ async def successful_payment(query: types.CallbackQuery, state: FSMContext):
 
     if await qiwi_p2p_client.check_if_bill_was_paid(bill):
         await bot.send_message(chat_id=query.from_user.id, text="Ваш заказ оплачен, ожидайте курьера")
+        await send_order(query, state)
     else:
         await bot.send_message(chat_id=query.from_user.id, text="Заказ не оплачен, попробуйте снова")
 
     await state.finish()
 
 
-
-@dp.callback_query_handler(lambda call: call.data.startswith("streets"), state=Buy.street)
-async def street(query: types.CallbackQuery, state: FSMContext):
-    await Buy.next()
-
-    keyboard = list(chain(*query.message.reply_markup.inline_keyboard))
-    street = next(item["text"] for item in keyboard if item["callback_data"] == query.data)
-    street_id = query.data.split(":")[1]
-
+async def send_order(query: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
-        data["street"] = street
-        data["street_id"] = street_id
+        cart_id = data["cart"]
+        phone = data["phone"]
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{URL}/api/streets/{street_id}/houses/") as response:
+        async with session.get(f"{URL}/api/cart/{cart_id}/") as response:
             if response.status == 200:
-                houses = await response.json()
+                cart = await response.json()
             else:
                 logger.error(await response.text())
 
-    markup = paginator(houses, "houses")
-
-    text = "Пожалуйста, укажите номер дома, к которому нужно осуществить доставку"
-
-    await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
-
-
-@dp.callback_query_handler(lambda call: call.data in ["previous_houses", "next_houses"], state=Buy.house)
-async def turn_list_houses(call: types.CallbackQuery, state: FSMContext):
-    chat_id = call.message.chat.id
-    message_id = call.message.message_id
-    street_id = 0
-
-    async with state.proxy() as data:
-        street_id = data["street_id"]
-
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f"{URL}/api/streets/{street_id}/houses/") as response:
-            if response.status == 200:
-                houses = await response.json()
-            else:
-                logger.error(await response.text())
-
-    markup = turn_page(call, houses, "houses")
-
-    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
-
+    text = (
+        "Новый заказ:\n\n"
+        f"Номер заказа: {cart_id}\n"
+        f"Телевон: {phone}"
+        f"Адрес доставки: {cart['address']}\n\n"
+        "Товары к оплате:\n"
     )
+
+    for product in cart["products"]:
+        text += product["product"] + " - " + str(product["count"]) + "\n"
+
+    admin_teltegram_token = "957140088"
+
+    await bot.send_message(chat_id=admin_teltegram_token, text=text)
+
 
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
