@@ -586,7 +586,7 @@ async def continue_order(query: types.CallbackQuery):
     """
     Запрос номера телефона
     """
-    text = "Введите телефон 8-800-555-35-35"
+    text = "Пожалуйста, введите номер телефона для того, чтобы мы с вами связались.\nПример:\n8-900-222-37-37"
 
     await bot.send_message(chat_id=query.from_user.id, text=text)
 
