@@ -609,33 +609,24 @@ async def phone(message: types.Message, state: FSMContext):
             else:
                 logger.error(await response.text())
 
-    markup = turn_page(call, districts, "districts")
-
-    await bot.edit_message_reply_markup(chat_id=chat_id, message_id=message_id, reply_markup=markup)
+    await payment(message, state)
 
 
-@dp.callback_query_handler(lambda call: call.data.startswith("districts"), state=Buy.district)
-async def district(query: types.CallbackQuery, state: FSMContext):
-    await Buy.next()
-
-    keyboard = list(chain(*query.message.reply_markup.inline_keyboard))
-    district = next(item["text"] for item in keyboard if item["callback_data"] == query.data)
-    district_id = query.data.split(":")[1]
+async def payment(message: types.Message, state: FSMContext):
+    await Buy.payment.set()
 
     async with state.proxy() as data:
-        data["district"] = district
-        data["district_id"] = district_id
+        total_price = data["total_price"]
+        bill = await qiwi_p2p_client.create_p2p_bill(amount=total_price)
+        data["bill"] = bill
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f"{URL}/api/districts/{district_id}/streets/") as response:
-            if response.status == 200:
-                streets = await response.json()
-            else:
-                logger.error(await response.text())
+    markup = types.InlineKeyboardMarkup()
+    markup.row(
+        types.InlineKeyboardButton("Оплатил", callback_data = "paied")
+    )
 
-    markup = paginator(streets, "streets")
+    await bot.send_message(chat_id=message.from_user.id, text=f"Спасибо! Пожалуйста, оплатите товар:\n{bill.pay_url}", reply_markup=markup)
 
-    text = "Пожалуйста, укажите название улицы, на которую нужно осуществить доставку"
 
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
