@@ -598,6 +598,7 @@ async def phone(message: types.Message, state: FSMContext):
     """
     async with state.proxy() as data:
         cart_id = data["cart"]
+        data["phone"] = message.text
 
     data = {"phone": message.text}
 
