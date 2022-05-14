@@ -102,6 +102,11 @@ class StreetViewSet(viewsets.GenericViewSet):
     queryset = Street.objects.all()
     serializer_class = StreetSerializer
 
+    def retrieve(self, request, pk=None):
+        street = self.get_object()
+        serializer = self.serializer_class(street)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
