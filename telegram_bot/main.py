@@ -576,6 +576,8 @@ async def confirm_order(query: types.CallbackQuery, state: FSMContext):
     for product in cart["products"]:
         text += product["product"] + " - " + str(product["count"]) + "\n"
 
+    text += f"\nЦена за товары: {str(cart['price'])}\nЦена доставки - {str(street['price'])}"
+
     await bot.send_message(chat_id=query.from_user.id, text=text, reply_markup=markup)
 
 
