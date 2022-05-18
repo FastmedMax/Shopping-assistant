@@ -657,7 +657,7 @@ async def send_order(query: types.CallbackQuery, state: FSMContext):
     text = (
         "Новый заказ:\n\n"
         f"Номер заказа: {cart_id}\n"
-        f"Телевон: {phone}"
+        f"Телефон: {phone}\n"
         f"Адрес доставки: {cart['address']}\n\n"
         "Товары к оплате:\n"
     )
