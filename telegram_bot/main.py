@@ -104,7 +104,7 @@ def turn_page(call: types.CallbackQuery, object, name):
 
 
 def validate_number(number):
-    pattern = r"^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$"
+    pattern = r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"
     return re.match(pattern, number)
 
 
