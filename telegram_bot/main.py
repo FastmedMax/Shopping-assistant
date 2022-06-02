@@ -585,12 +585,13 @@ async def continue_order(query: types.CallbackQuery):
     """
     Запрос номера телефона
     """
+    await Buy.phone.set()
     text = "Пожалуйста, введите номер телефона для того, чтобы мы с вами связались.\nПример:\n8-900-222-37-37"
 
     await bot.send_message(chat_id=query.from_user.id, text=text)
 
 
-@dp.message_handler(lambda call: validate_number(call.text), state="*")
+@dp.message_handler(lambda call: validate_number(call.text), state=Buy.phone)
 async def phone(message: types.Message, state: FSMContext):
     """
     Оброботчик номера телефона
@@ -611,7 +612,7 @@ async def phone(message: types.Message, state: FSMContext):
     await payment(message, state)
 
 
-@dp.message_handler(content_types=ContentType.TEXT, state="*")
+@dp.message_handler(lambda call: not validate_number(call.text), state=Buy.phone)
 async def incorrect_phone(message: types.Message):
     """
     Сообщение о некорректном номере телефона
