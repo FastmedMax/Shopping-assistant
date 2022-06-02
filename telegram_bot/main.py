@@ -612,6 +612,20 @@ async def phone(message: types.Message, state: FSMContext):
     await payment(message, state)
 
 
+@dp.message_handler(content_types=ContentType.TEXT, state="*")
+async def incorrect_phone(message: types.Message):
+    """
+    Сообщение о некорректном номере телефона
+    """
+    text = (
+        "Пожалуйста, введите ПРАВИЛЬНЫЙ номер телефона для того, чтобы мы с вами связались.\n"
+        "Пример:\n"
+        "8-900-222-37-37"
+    )
+
+    await bot.send_message(chat_id=message.from_user.id, text=text)
+
+
 async def payment(message: types.Message, state: FSMContext):
     await Buy.payment.set()
 
