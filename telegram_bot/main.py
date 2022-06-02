@@ -617,7 +617,7 @@ async def payment(message: types.Message, state: FSMContext):
 
     async with state.proxy() as data:
         total_price = data["total_price"]
-        bill = await qiwi_p2p_client.create_p2p_bill(amount=total_price)
+        bill = await qiwi_p2p_client.create_p2p_bill(amount=total_price, pay_source_filter=["card", "qw"])
         data["bill"] = bill
 
     markup = types.InlineKeyboardMarkup()
