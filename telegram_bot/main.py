@@ -37,7 +37,6 @@ class Buy(StatesGroup):
     amount = State()
     phone = State()
     payment = State()
-    courier = State()
 
 
 def paginator(objects, name) -> types.InlineKeyboardMarkup:
