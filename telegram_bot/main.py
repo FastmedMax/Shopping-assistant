@@ -509,7 +509,7 @@ async def cancel(message: types.Message, state: FSMContext):
     """
     await state.finish()
 
-    text = "Покупака отменена."
+    text = "Покупка отменена."
 
     await bot.send_message(chat_id=message.from_user.id, text=text)
 
